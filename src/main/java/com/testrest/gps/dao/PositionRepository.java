@@ -20,4 +20,6 @@ public interface PositionRepository extends MongoRepository<GPSPosition, String>
     public List<GPSPosition> findById(String id);
 
     public List<GPSPosition> findByTimeEntryBetween(Date from, Date to);
+        
+    public void deleteById(String id);
 }

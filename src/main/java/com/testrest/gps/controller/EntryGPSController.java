@@ -31,13 +31,16 @@ public class EntryGPSController {
     public static final  String MAPPING_GPSPOSITION_ADD = MAPPING_PATH + "entry";    
     public static final  String MAPPING_GPSPOSITION_VALUES = MAPPING_PATH + "values";  
     public static final  String MAPPING_GPSPOSITION_DISTANCE = MAPPING_PATH + "distance";
+    public static final  String MAPPING_GPSPOSITION_DELETE = MAPPING_PATH + "delete";
+    public static final  String MAPPING_GPSPOSITION_GET = MAPPING_PATH + "get";
     
     
     // Zone Of Constant Parameters
     public static final  String PARAMETER_LONGITUDE = "lo";   
     public static final  String PARAMETER_LATITUDE = "la";  
     public static final  String PARAMETER_DATE_BEGIN = "begin"; 
-    public static final  String PARAMETER_DATE_END = "end";   
+    public static final  String PARAMETER_DATE_END = "end";  
+    public static final  String PARAMETER_ID = "id";  
     
     
     // Zone Of Messages
@@ -129,7 +132,33 @@ public class EntryGPSController {
         return distance;
     }
     
+    /**
+     * Delete GPSPosition in DB with
+     * @param id
+     * @return deleted
+     */
+    @RequestMapping(MAPPING_GPSPOSITION_DELETE)
+    public String delete(@RequestParam(PARAMETER_ID) String id)
+    {
+        repository.deleteById(id);
+        return "deleted";
+    }
     
+    /**
+     * Get Position By 
+     * @param id
+     * @return  GPSPosition or Error Message
+     */
+    @RequestMapping(MAPPING_GPSPOSITION_GET)
+    public Object getGPSPosition(@RequestParam(PARAMETER_ID) String id)
+    {
+        List<GPSPosition> positions = repository.findById(id);
+        
+        if (positions.isEmpty())
+            return "not Found";
+        
+        return positions.get(0);
+    }
     
     /**
      * Error Message of Missing Params

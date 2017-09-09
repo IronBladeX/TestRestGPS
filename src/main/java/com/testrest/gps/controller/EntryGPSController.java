@@ -2,6 +2,7 @@ package com.testrest.gps.controller;
 
 import com.testrest.gps.bean.GPSPosition;
 import com.testrest.gps.dao.PositionRepository;
+import com.testrest.gps.utils.Utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class EntryGPSController {
     public static final String MAPPING_PATH = "/";
     public static final  String MAPPING_GPSPOSITION_ADD = MAPPING_PATH + "entry";    
     public static final  String MAPPING_GPSPOSITION_VALUES = MAPPING_PATH + "values";  
+    public static final  String MAPPING_GPSPOSITION_DISTANCE = MAPPING_PATH + "distance";
     
     
     // Zone Of Constant Parameters
@@ -93,6 +95,41 @@ public class EntryGPSController {
                 
         return positions;
     }
+    
+    /**
+     * Calculate Distance Of All GPSPosition between
+     * @param dateBegin
+     * @param dateEnd
+     * @return distance
+     */
+    @RequestMapping(MAPPING_GPSPOSITION_DISTANCE)
+    public double distance(@RequestParam(PARAMETER_DATE_BEGIN) String dateBegin, @RequestParam(PARAMETER_DATE_END) String dateEnd)
+    {
+        List<GPSPosition> positions;
+        
+        //Parse Date For sort
+        SimpleDateFormat ft = new SimpleDateFormat(DATE_FORMAT);
+        
+        Date begin; 
+        Date end; 
+        
+        try {
+            begin = ft.parse(dateBegin);
+            end = ft.parse(dateEnd);
+        } catch(ParseException e) {
+            return 0;
+        }
+        
+        //Sort with data in DB
+        positions = repository.findByTimeEntryBetween(begin, end);
+                
+        //Calculate Distance between GPSPositions
+        double distance = Utils.CalculateDistance(positions);
+        
+        return distance;
+    }
+    
+    
     
     /**
      * Error Message of Missing Params

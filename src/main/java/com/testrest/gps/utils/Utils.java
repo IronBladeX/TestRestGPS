@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  *  Utils Class
- * @author alexa
+ * @author Alexandre Perrot
  */
 public class Utils {
     

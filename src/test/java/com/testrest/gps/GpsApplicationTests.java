@@ -66,13 +66,8 @@ public class GpsApplicationTests {
        
         String id = (String)json.get("id");
         
-        //Params for Get
-        MultiValueMap<String, String> params_get = new LinkedMultiValueMap<>();
-        
-        params_get.set(EntryGPSController.PARAMETER_ID, id);
-        
         //Execute And Check if Entry is Added
-        this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_GET).params(params_get))
+        this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_GET, id))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$." + EntryGPSController.PARAMETER_LONGITUDE).value(41.0))
                 .andExpect(jsonPath("$." + EntryGPSController.PARAMETER_LATITUDE).value(45.0));
@@ -181,19 +176,13 @@ public class GpsApplicationTests {
         String id = (String)json.get("id");
         
         //Delete Position
-        this.mockMvc.perform(delete(EntryGPSController.MAPPING_GPSPOSITION_DELETE + "/{id}", id))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(EntryGPSController.MESSAGE_DELETED));
+        this.mockMvc.perform(delete(EntryGPSController.MAPPING_GPSPOSITION_DELETE, id))
+                .andDo(print()).andExpect(status().isAccepted());
         
-        //Param For Check If Delete
-        MultiValueMap<String, String> params_get = new LinkedMultiValueMap<>();
-        
-        params_get.set(EntryGPSController.PARAMETER_ID, id);
         
         //Check If Delete
-        this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_GET).params(params_get))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(EntryGPSController.MESSAGE_ERROR_NOT_FOUND));
+        this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_GET, id))
+                .andDo(print()).andExpect(status().isNotFound());
     }
 
     /**

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,11 +33,12 @@ public class EntryGPSController {
     
     // Zone Of Constant Path URL Mapping
     public static final String MAPPING_PATH = "/";
-    public static final  String MAPPING_GPSPOSITION_ADD = MAPPING_PATH + "entry";    
-    public static final  String MAPPING_GPSPOSITION_VALUES = MAPPING_PATH + "values";  
-    public static final  String MAPPING_GPSPOSITION_DISTANCE = MAPPING_PATH + "distance";
-    public static final  String MAPPING_GPSPOSITION_DELETE = MAPPING_PATH + "delete";
-    public static final  String MAPPING_GPSPOSITION_GET = MAPPING_PATH + "get";
+    public static final String MAPPING_GPSPOSITION = "positions";
+    public static final  String MAPPING_GPSPOSITION_ADD = MAPPING_PATH + MAPPING_GPSPOSITION;    
+    public static final  String MAPPING_GPSPOSITION_VALUES = MAPPING_PATH + MAPPING_GPSPOSITION;  
+    public static final  String MAPPING_GPSPOSITION_DISTANCE = MAPPING_PATH + MAPPING_GPSPOSITION + "/distance";
+    public static final  String MAPPING_GPSPOSITION_DELETE = MAPPING_PATH + MAPPING_GPSPOSITION + "/{id}";
+    public static final  String MAPPING_GPSPOSITION_GET = MAPPING_PATH + MAPPING_GPSPOSITION + "/{id}";
     
     
     // Zone Of Constant Parameters
@@ -139,11 +142,14 @@ public class EntryGPSController {
      * @param id
      * @return deleted
      */
-    @RequestMapping(value = MAPPING_GPSPOSITION_DELETE + "/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable(PARAMETER_ID) String id)
+    @RequestMapping(value = MAPPING_GPSPOSITION_DELETE, method = RequestMethod.DELETE)
+    public ResponseEntity delete(@PathVariable(PARAMETER_ID) String id)
     {
+        if (repository.findById(id).isEmpty())
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        
         repository.deleteById(id);
-        return MESSAGE_DELETED;
+        return new ResponseEntity(HttpStatus.ACCEPTED);
     }
     
     /**
@@ -151,13 +157,13 @@ public class EntryGPSController {
      * @param id
      * @return  GPSPosition or Error Message
      */
-    @RequestMapping(MAPPING_GPSPOSITION_GET)
-    public Object getGPSPosition(@RequestParam(PARAMETER_ID) String id)
+    @RequestMapping(value = MAPPING_GPSPOSITION_GET, method = RequestMethod.GET)
+    public Object getGPSPosition(@PathVariable(PARAMETER_ID) String id)
     {
         List<GPSPosition> positions = repository.findById(id);
         
         if (positions.isEmpty())
-            return MESSAGE_ERROR_NOT_FOUND;
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         
         return positions.get(0);
     }

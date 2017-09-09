@@ -6,6 +6,7 @@
 package com.testrest.gps.dao;
 
 import com.testrest.gps.bean.GPSPosition;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -17,4 +18,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface PositionRepository extends MongoRepository<GPSPosition, String> {
 
     public List<GPSPosition> findById(String id);
+
+    public List<GPSPosition> findByTimeEntryBetween(Date from, Date to);
 }

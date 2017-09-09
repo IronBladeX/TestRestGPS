@@ -2,6 +2,11 @@ package com.testrest.gps.controller;
 
 import com.testrest.gps.bean.GPSPosition;
 import com.testrest.gps.dao.PositionRepository;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,15 +21,21 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class EntryGPSController {
+        
+    /** Format Date For Parameters REST */
+    public static String DATE_FORMAT = "yyyy-MM-dd HH:mm";
     
     // Zone Of Constant Path URL Mapping
     public static final String MAPPING_PATH = "/";
-    public static final  String MAPPING_GPSPOSITION_ADD = MAPPING_PATH + "entry";   
+    public static final  String MAPPING_GPSPOSITION_ADD = MAPPING_PATH + "entry";    
+    public static final  String MAPPING_GPSPOSITION_VALUES = MAPPING_PATH + "values";  
     
     
     // Zone Of Constant Parameters
     public static final  String PARAMETER_LONGITUDE = "lo";   
     public static final  String PARAMETER_LATITUDE = "la";  
+    public static final  String PARAMETER_DATE_BEGIN = "begin"; 
+    public static final  String PARAMETER_DATE_END = "end";   
     
     
     // Zone Of Messages
@@ -51,6 +62,36 @@ public class EntryGPSController {
         repository.save(positionToAdd);
         
         return positionToAdd;
+    }
+    
+    /**
+     * Get All GPSPosition between
+     * @param dateBegin
+     * @param dateEnd
+     * @return 
+     */
+    @RequestMapping(MAPPING_GPSPOSITION_VALUES)
+    public List<GPSPosition> values(@RequestParam(PARAMETER_DATE_BEGIN) String dateBegin, @RequestParam(PARAMETER_DATE_END) String dateEnd)
+    {
+        List<GPSPosition> positions = new ArrayList<>();
+        
+        //Parse Date For sort
+        SimpleDateFormat ft = new SimpleDateFormat(DATE_FORMAT);
+        
+        Date begin; 
+        Date end;
+        
+        try {
+            begin = ft.parse(dateBegin);
+            end = ft.parse(dateEnd);
+        } catch(ParseException e) {
+            return positions;
+        }
+        
+        //Sort with data in DB
+        positions = repository.findByTimeEntryBetween(begin, end);
+                
+        return positions;
     }
     
     /**

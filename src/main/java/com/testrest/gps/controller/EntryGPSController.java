@@ -11,7 +11,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,14 +60,11 @@ public class EntryGPSController {
     
     /**
      * Add Entry GPSPosition in DB At this Moment
-     * @param longitude
-     * @param latitude
+     * @param positionToAdd
      * @return GPSPosition
      */
-    @RequestMapping(MAPPING_GPSPOSITION_ADD)
-    public GPSPosition entry(@RequestParam(value=PARAMETER_LONGITUDE) double longitude, @RequestParam(value=PARAMETER_LATITUDE) double latitude) {
-                
-        GPSPosition positionToAdd = new GPSPosition(longitude, latitude);
+    @RequestMapping(value = MAPPING_GPSPOSITION_ADD, method = RequestMethod.POST)
+    public GPSPosition entry(@RequestBody GPSPosition positionToAdd) {
         
         repository.save(positionToAdd);
         
@@ -139,8 +139,8 @@ public class EntryGPSController {
      * @param id
      * @return deleted
      */
-    @RequestMapping(MAPPING_GPSPOSITION_DELETE)
-    public String delete(@RequestParam(PARAMETER_ID) String id)
+    @RequestMapping(value = MAPPING_GPSPOSITION_DELETE + "/{id}", method = RequestMethod.DELETE)
+    public String delete(@PathVariable(PARAMETER_ID) String id)
     {
         repository.deleteById(id);
         return MESSAGE_DELETED;

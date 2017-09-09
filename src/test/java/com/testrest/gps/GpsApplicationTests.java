@@ -1,5 +1,7 @@
 package com.testrest.gps;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.testrest.gps.bean.GPSPosition;
 import com.testrest.gps.controller.EntryGPSController;
 import com.testrest.gps.dao.PositionRepository;
@@ -13,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -41,19 +44,8 @@ public class GpsApplicationTests {
      * Repository of GPSPosition
      */
     @Autowired
-    private PositionRepository repository;
+    private PositionRepository repository;    
     
-    /**
-     * Test AddGPSPosition error if noParams in query
-     * @throws Exception 
-     */
-    @Test
-    public void noParamsAddGPSPosition() throws Exception
-    {
-        this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_ADD)).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string(String.format(EntryGPSController.MESSAGE_ERROR_MISSING_PARAMETER, EntryGPSController.PARAMETER_LONGITUDE, "double")));
-    }
     
     /**
      * Test AddGPSPosition with params and check if the result is Good
@@ -62,17 +54,13 @@ public class GpsApplicationTests {
     @Test
     public void entryAddGPSPosition() throws Exception
     {
-        //Params for Add
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        GPSPosition position = new GPSPosition(41.0, 45.0);
         
-        params.set(EntryGPSController.PARAMETER_LONGITUDE, "41.0");
-        params.set(EntryGPSController.PARAMETER_LATITUDE, "45.0");
-       
-        //Add And Check Result
-        MvcResult result = this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_ADD).params(params))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$." + EntryGPSController.PARAMETER_LONGITUDE).value(41.0))
-                .andExpect(jsonPath("$." + EntryGPSController.PARAMETER_LATITUDE).value(45.0)).andReturn();
+        MvcResult result = this.mockMvc.perform(
+            post(EntryGPSController.MAPPING_GPSPOSITION_ADD)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(position)))
+            .andExpect(status().isOk()).andReturn();
         
         JSONObject json = new JSONObject(result.getResponse().getContentAsString());      
        
@@ -174,47 +162,26 @@ public class GpsApplicationTests {
     }
     
     /**
-     * Test Delete error if noParams in query
-     * @throws Exception 
-     */
-    @Test
-    public void noParamsDelete() throws Exception
-    {
-        this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_DELETE)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(String.format(EntryGPSController.MESSAGE_ERROR_MISSING_PARAMETER, EntryGPSController.PARAMETER_ID, "String")));
-    }
-    
-    /**
      * Test Delete GPSPosition
      * @throws Exception 
      */
     @Test
     public void deleteGPSPosition() throws Exception
     {
-        //Params For Add Position
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        GPSPosition position = new GPSPosition(41.0, 45.0);
         
-        params.set(EntryGPSController.PARAMETER_LONGITUDE, "41.0");
-        params.set(EntryGPSController.PARAMETER_LATITUDE, "45.0");
+        MvcResult result = this.mockMvc.perform(
+            post(EntryGPSController.MAPPING_GPSPOSITION_ADD)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(position)))
+            .andExpect(status().isOk()).andReturn();
         
-        //Add GPSPosition And Get Result
-        MvcResult result = this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_ADD).params(params))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$." + EntryGPSController.PARAMETER_LONGITUDE).value(41.0))
-                .andExpect(jsonPath("$." + EntryGPSController.PARAMETER_LATITUDE).value(45.0)).andReturn();
-        
-        JSONObject json = new JSONObject(result.getResponse().getContentAsString());       
+        JSONObject json = new JSONObject(result.getResponse().getContentAsString());      
        
-        //Get ID of Added GPSPosition
         String id = (String)json.get("id");
         
-        //Param For Delete
-        MultiValueMap<String, String> params_delete = new LinkedMultiValueMap<>();
-        
-        params_delete.set(EntryGPSController.PARAMETER_ID, id);
-        
         //Delete Position
-        this.mockMvc.perform(get(EntryGPSController.MAPPING_GPSPOSITION_DELETE).params(params_delete))
+        this.mockMvc.perform(delete(EntryGPSController.MAPPING_GPSPOSITION_DELETE + "/{id}", id))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string(EntryGPSController.MESSAGE_DELETED));
         
@@ -261,4 +228,15 @@ public class GpsApplicationTests {
     {
         repository.deleteAll();  
     }
+    
+    public static String asJsonString(final Object obj) throws Exception
+    {
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            final String jsonContent = mapper.writeValueAsString(obj);
+            return jsonContent;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }  
 }

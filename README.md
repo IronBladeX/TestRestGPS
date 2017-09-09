@@ -10,14 +10,9 @@ Instalation:
 Ajouter un point GPS :
 
 ```sh
-    Url: http://localhost:8080/entry?longitude=45.0&latitude=10.0
-    Paramétres:
-                Longitude
-                    nom: longitude
-                    type: double
-                Latitude
-                    nom: latitude
-                    type: double
+    Url POST: http://localhost:8080/entry/
+    JSON:
+                {"longitude":194.67,"latitude":690.6,"timeEntry":"2017-09-09 13:36:03"}
     Retourne:
         Retourne le point ajouté
 ```
@@ -59,11 +54,8 @@ Récupérer la distance des points entre deux dates:
 Supprimer un point GPS
 
 ```sh
-    Url: http://localhost:8080/delete?id=59b3b8196947262a20a85b02
-    Paramétres:
-                Identifiant
-                    nom: id
-                    type: String
+    Url DELETE: http://localhost:8080/delete/{id}
+        ID: Id de la position
 ```
 
 Récupérer un point GPS

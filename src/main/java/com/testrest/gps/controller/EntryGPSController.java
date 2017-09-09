@@ -36,8 +36,8 @@ public class EntryGPSController {
     
     
     // Zone Of Constant Parameters
-    public static final  String PARAMETER_LONGITUDE = "lo";   
-    public static final  String PARAMETER_LATITUDE = "la";  
+    public static final  String PARAMETER_LONGITUDE = "longitude";   
+    public static final  String PARAMETER_LATITUDE = "latitude";  
     public static final  String PARAMETER_DATE_BEGIN = "begin"; 
     public static final  String PARAMETER_DATE_END = "end";  
     public static final  String PARAMETER_ID = "id";  
@@ -45,6 +45,8 @@ public class EntryGPSController {
     
     // Zone Of Messages
     public static final  String MESSAGE_ERROR_MISSING_PARAMETER = "Error: %s parameter is missing for type %s"; 
+    public static final  String MESSAGE_ERROR_NOT_FOUND = "not Found"; 
+    public static final  String MESSAGE_DELETED = "deleted"; 
     
     
     /**
@@ -141,7 +143,7 @@ public class EntryGPSController {
     public String delete(@RequestParam(PARAMETER_ID) String id)
     {
         repository.deleteById(id);
-        return "deleted";
+        return MESSAGE_DELETED;
     }
     
     /**
@@ -155,7 +157,7 @@ public class EntryGPSController {
         List<GPSPosition> positions = repository.findById(id);
         
         if (positions.isEmpty())
-            return "not Found";
+            return MESSAGE_ERROR_NOT_FOUND;
         
         return positions.get(0);
     }

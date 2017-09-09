@@ -6,6 +6,11 @@
 package com.testrest.gps.utils;
 
 import com.testrest.gps.bean.GPSPosition;
+import static com.testrest.gps.controller.EntryGPSController.DATE_FORMAT;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -61,5 +66,25 @@ public class Utils {
         }
         
         return distance;
+    }
+    
+    public static List<GPSPosition> GetBetween(List<GPSPosition> positions, String timeBegin, String timeEnd) throws ParseException
+    {
+        SimpleDateFormat ft = new SimpleDateFormat(DATE_FORMAT);
+                
+        Date begin = ft.parse(timeBegin); 
+        Date end = ft.parse(timeEnd);
+        
+        List<GPSPosition> result = new ArrayList<>();
+        
+        for(GPSPosition p : positions)
+        {
+            if (p.timeEntry.after(begin) && p.timeEntry.before(end))
+            {
+                result.add(p);
+            }
+        }
+        
+        return result;
     }
 }

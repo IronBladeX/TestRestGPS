@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>gps</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Project Spring Boot Test Rest With GPSPositions</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -29,13 +29,45 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+                
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                </dependency>
+                
+                <dependency>
+                    <groupId>com.mysema.querydsl</groupId>
+                    <artifactId>querydsl-mongodb</artifactId>
+                    <version>3.7.4</version>
+                </dependency>
 
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-test</artifactId>
+                    <scope>test</scope>
 		</dependency>
+                
+                <dependency>
+                    <groupId>com.jayway.jsonpath</groupId>
+                    <artifactId>json-path</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                
+                
 	</dependencies>
+
+        <repositories>
+            <repository>
+                <id>spring-releases</id>
+                <url>https://repo.spring.io/libs-release</url>
+            </repository>
+        </repositories>
+        <pluginRepositories>
+            <pluginRepository>
+                <id>spring-releases</id>
+                <url>https://repo.spring.io/libs-release</url>
+            </pluginRepository>
+        </pluginRepositories>
 
 	<build>
 		<plugins>
@@ -46,5 +78,6 @@
 		</plugins>
 	</build>
 
+        
 
 </project>

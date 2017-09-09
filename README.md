@@ -2,7 +2,7 @@
 
 Instalation:
   - Installer et lancer un serveur [MongoDB](https://www.mongodb.com/download-center#community)
-  - Paramétrer si les configurations de MongoDB sont différentes dans application.properties  
+  - Paramétrer si les configurations de MongoDB sont différentes dans [application.properties](https://github.com/IronBladeX/TestRestGPS/blob/master/src/main/resources/application.properties)
   - Lancer le Projet pour essayer
 
 # Services REST:
